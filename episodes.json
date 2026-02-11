@@ -1,5 +1,17 @@
 [
-  { "tap": 1, "url": "https://s3.phim1280.tv/20240318/p2oB0Tj7/index.m3u8" },
-  { "tap": 2, "url": "https://s3.phim1280.tv/20240318/BqPt4VYU/index.m3u8" },
-  { "tap": 3, "url": "https://s3.phim1280.tv/20240318/UtGLL0NU/index.m3u8" }
+  {
+    "tap": "Tập 1",
+    "url": "link_m3u8_tap1",
+    "image": "images/tap1.webp"
+  },
+  {
+    "tap": "Tập 2",
+    "url": "link_m3u8_tap2",
+    "image": "images/tap2.webp"
+  },
+  {
+    "tap": "Tập 3",
+    "url": "link_m3u8_tap3",
+    "image": "images/tap3.webp"
+  }
 ]
