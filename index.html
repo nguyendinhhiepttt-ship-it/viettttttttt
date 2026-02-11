@@ -3,62 +3,154 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web Phim</title>
+<title>Netflix Style</title>
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box}
+
 body{
-  background:#111;
+  background:#141414;
+  font-family:Arial, Helvetica, sans-serif;
   color:white;
-  font-family:Arial;
+}
+
+/* HEADER */
+header{
+  position:fixed;
+  top:0;
+  width:100%;
+  padding:20px 40px;
+  background:linear-gradient(to bottom,rgba(0,0,0,0.8),transparent);
+  z-index:10;
+  font-size:26px;
+  font-weight:bold;
+  color:#e50914;
+}
+
+/* HERO BANNER */
+.hero{
+  height:70vh;
+  background:linear-gradient(to top,#141414,transparent),
+             url('https://picsum.photos/1600/900');
+  background-size:cover;
+  background-position:center;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:60px 40px;
+}
+
+.hero h1{
+  font-size:50px;
+  margin-bottom:15px;
+}
+
+.hero button{
+  width:150px;
+  padding:12px;
+  background:#e50914;
+  border:none;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  border-radius:4px;
+}
+
+.hero button:hover{
+  background:#f6121d;
+}
+
+/* EPISODE SECTION */
+.section{
+  padding:40px;
+}
+
+.section h2{
+  margin-bottom:20px;
 }
 
 #episodeList{
   display:grid;
-  grid-template-columns: repeat(auto-fill,minmax(80px,1fr));
-  gap:5px;
+  grid-template-columns: repeat(auto-fill,minmax(70px,1fr));
+  gap:10px;
   max-height:300px;
   overflow-y:auto;
 }
 
-button{
-  padding:6px;
+#episodeList button{
   background:#222;
-  color:white;
   border:none;
+  padding:8px;
+  color:white;
   cursor:pointer;
+  border-radius:4px;
+  transition:0.2s;
 }
 
-button:hover{
-  background:red;
+#episodeList button:hover{
+  background:#e50914;
 }
 
-video{
-  width:100%;
-  max-width:900px;
-  margin-top:20px;
+/* MODAL PLAYER */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.95);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  z-index:100;
+}
+
+.modal video{
+  width:90%;
+  max-width:1000px;
+}
+
+.close{
+  position:absolute;
+  top:20px;
+  right:40px;
+  font-size:30px;
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<h2>Danh sách tập</h2>
-<div id="episodeList"></div>
+<header>NETFLIX DEMO</header>
 
-<video id="video" controls></video>
+<div class="hero">
+  <h1>Tên Bộ Phim</h1>
+  <button onclick="openFirst()">Xem ngay</button>
+</div>
+
+<div class="section">
+  <h2>Danh sách tập</h2>
+  <div id="episodeList"></div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="close" onclick="closePlayer()">✖</div>
+  <video id="video" controls></video>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <script>
-
 const video = document.getElementById("video");
 const container = document.getElementById("episodeList");
+const modal = document.getElementById("modal");
 let hls;
+let episodes = [];
 
-// load file json
 fetch("episodes.json")
 .then(res => res.json())
 .then(data => {
+
+  episodes = data;
 
   data.forEach(ep => {
 
@@ -72,7 +164,15 @@ fetch("episodes.json")
 
 });
 
+function openFirst(){
+  if(episodes.length > 0){
+    play(episodes[0].url);
+  }
+}
+
 function play(url){
+
+  modal.style.display = "flex";
 
   if(hls){
     hls.destroy();
@@ -87,6 +187,13 @@ function play(url){
   }
 }
 
+function closePlayer(){
+  modal.style.display = "none";
+  video.pause();
+  if(hls){
+    hls.destroy();
+  }
+}
 </script>
 
 </body>
