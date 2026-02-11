@@ -3,180 +3,189 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Netflix Style</title>
+<title>Web Phim</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
 
 body{
-  background:#141414;
-  font-family:Arial, Helvetica, sans-serif;
+  font-family:'Poppins',sans-serif;
+  background:#0f172a;
   color:white;
 }
 
-/* HEADER */
-header{
+/* NAVBAR */
+nav{
   position:fixed;
-  top:0;
   width:100%;
-  padding:20px 40px;
-  background:linear-gradient(to bottom,rgba(0,0,0,0.8),transparent);
+  top:0;
+  background:rgba(0,0,0,0.7);
+  padding:15px 40px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
   z-index:10;
-  font-size:26px;
-  font-weight:bold;
-  color:#e50914;
 }
 
-/* HERO BANNER */
+.logo{
+  font-size:22px;
+  font-weight:600;
+  color:red;
+}
+
+nav input{
+  padding:8px 12px;
+  border-radius:20px;
+  border:none;
+  width:220px;
+}
+
+/* HERO */
 .hero{
-  height:70vh;
-  background:linear-gradient(to top,#141414,transparent),
-             url('https://picsum.photos/1600/900');
-  background-size:cover;
-  background-position:center;
+  height:80vh;
+  background:url('https://images.unsplash.com/photo-1606112219348-204d7d8b94ee') center/cover no-repeat;
   display:flex;
-  flex-direction:column;
-  justify-content:flex-end;
-  padding:60px 40px;
+  align-items:center;
+  padding:0 60px;
+  margin-top:60px;
+  position:relative;
+}
+
+.hero::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.2));
+}
+
+.hero-content{
+  position:relative;
+  max-width:600px;
 }
 
 .hero h1{
-  font-size:50px;
+  font-size:40px;
   margin-bottom:15px;
 }
 
-.hero button{
-  width:150px;
-  padding:12px;
-  background:#e50914;
-  border:none;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-  border-radius:4px;
+.hero p{
+  margin-bottom:20px;
+  opacity:0.8;
 }
 
-.hero button:hover{
-  background:#f6121d;
+.hero button{
+  padding:12px 25px;
+  border:none;
+  background:red;
+  color:white;
+  font-size:16px;
+  border-radius:6px;
+  cursor:pointer;
 }
 
 /* EPISODE SECTION */
 .section{
-  padding:40px;
+  padding:40px 60px;
 }
 
 .section h2{
   margin-bottom:20px;
 }
 
-#episodeList{
-  display:grid;
-  grid-template-columns: repeat(auto-fill,minmax(70px,1fr));
-  gap:10px;
-  max-height:300px;
-  overflow-y:auto;
+.episode-row{
+  display:flex;
+  gap:15px;
+  overflow-x:auto;
 }
 
-#episodeList button{
-  background:#222;
-  border:none;
-  padding:8px;
-  color:white;
+.card{
+  min-width:160px;
+  height:220px;
+  background:#1e293b;
+  border-radius:10px;
+  display:flex;
+  align-items:flex-end;
+  padding:10px;
   cursor:pointer;
-  border-radius:4px;
-  transition:0.2s;
+  transition:0.3s;
+  position:relative;
 }
 
-#episodeList button:hover{
-  background:#e50914;
+.card:hover{
+  transform:scale(1.1);
 }
 
-/* MODAL PLAYER */
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.95);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  z-index:100;
+.card span{
+  font-weight:600;
 }
 
-.modal video{
-  width:90%;
+/* VIDEO */
+.player{
+  padding:40px 60px;
+}
+
+video{
+  width:100%;
   max-width:1000px;
-}
-
-.close{
-  position:absolute;
-  top:20px;
-  right:40px;
-  font-size:30px;
-  cursor:pointer;
+  border-radius:10px;
 }
 </style>
 </head>
 
 <body>
 
-<header>NETFLIX DEMO</header>
+<nav>
+  <div class="logo">MyFlix</div>
+  <input type="text" placeholder="Tìm kiếm phim...">
+</nav>
 
 <div class="hero">
-  <h1>Tên Bộ Phim</h1>
-  <button onclick="openFirst()">Xem ngay</button>
+  <div class="hero-content">
+    <h1>Phim Của Tôi</h1>
+    <p>Bộ phim hấp dẫn đang phát sóng. Nhấn xem ngay để thưởng thức.</p>
+    <button onclick="playFirst()">▶ Xem Tập 1</button>
+  </div>
 </div>
 
 <div class="section">
-  <h2>Danh sách tập</h2>
-  <div id="episodeList"></div>
+  <h2>Danh Sách Tập</h2>
+  <div class="episode-row" id="episodes"></div>
 </div>
 
-<div class="modal" id="modal">
-  <div class="close" onclick="closePlayer()">✖</div>
+<div class="player">
   <video id="video" controls></video>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <script>
+
+const episodes = [
+  {tap:"Tập 1", url:"LINK_M3U8_TAP1"},
+  {tap:"Tập 2", url:"LINK_M3U8_TAP2"},
+  {tap:"Tập 3", url:"LINK_M3U8_TAP3"}
+];
+
+const container = document.getElementById("episodes");
 const video = document.getElementById("video");
-const container = document.getElementById("episodeList");
-const modal = document.getElementById("modal");
 let hls;
-let episodes = [];
 
-fetch("episodes.json")
-.then(res => res.json())
-.then(data => {
-
-  episodes = data;
-
-  data.forEach(ep => {
-
-    const btn = document.createElement("button");
-    btn.innerText = ep.tap;
-
-    btn.onclick = () => play(ep.url);
-
-    container.appendChild(btn);
-  });
-
+episodes.forEach(ep=>{
+  const card = document.createElement("div");
+  card.className="card";
+  card.innerHTML = "<span>"+ep.tap+"</span>";
+  card.onclick = ()=> play(ep.url);
+  container.appendChild(card);
 });
 
-function openFirst(){
-  if(episodes.length > 0){
-    play(episodes[0].url);
-  }
-}
-
 function play(url){
-
-  modal.style.display = "flex";
-
-  if(hls){
-    hls.destroy();
-  }
+  if(hls) hls.destroy();
 
   if(Hls.isSupported()){
     hls = new Hls();
@@ -185,15 +194,14 @@ function play(url){
   }else{
     video.src = url;
   }
+
+  window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
 }
 
-function closePlayer(){
-  modal.style.display = "none";
-  video.pause();
-  if(hls){
-    hls.destroy();
-  }
+function playFirst(){
+  play(episodes[0].url);
 }
+
 </script>
 
 </body>
