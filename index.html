@@ -2,183 +2,46 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MyFlix</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
+<title>Conan</title>
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+body { background:#111; color:white; font-family:Arial }
+.episode {
+  display:inline-block;
+  width:100px;
+  margin:5px;
+  padding:10px;
+  background:#222;
+  text-align:center;
+  border-radius:8px;
 }
-
-body{
-  font-family:'Poppins',sans-serif;
-  background:#0f172a;
-  color:white;
-}
-
-/* NAVBAR */
-nav{
-  position:fixed;
-  width:100%;
-  top:0;
-  background:rgba(0,0,0,0.8);
-  padding:15px 40px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  z-index:10;
-}
-
-.logo{
-  font-size:22px;
-  font-weight:600;
-  color:red;
-}
-
-/* HERO */
-.hero{
-    height: 70vh;
-    background: url('images/HOANG.jpg') center/cover no-repeat;
-    display: flex;
-    align-items: center;
-    padding: 0 60px;
-    margin-top: 60px;
-    position: relative;
-}
-
-.hero{
-    height: 70vh;
-    background: url('images/HOANG.jpg') center/cover no-repeat;
-    display: flex;
-    align-items: center;
-    padding: 0 60px;
-    margin-top: 60px;
-    position: relative;
-}
-
-.hero-content{
-    position:relative;
-    max-width:600px;
-    z-index:2;
-}
-
-.hero h1{
-  font-size:40px;
-  margin-bottom:15px;
-}
-
-.hero button{
-  padding:12px 25px;
-  border:none;
-  background:red;
-  color:white;
-  font-size:16px;
-  border-radius:6px;
-  cursor:pointer;
-}
-
-/* SECTION */
-.section{
-  padding:50px 60px;
-}
-
-.section h2{
-  margin-bottom:20px;
-}
-
-.episode-row{
-  display:flex;
-  gap:15px;
-  overflow-x:auto;
-}
-
-.card{
-  min-width:170px;
-  height:240px;
-  border-radius:12px;
-  overflow:hidden;
-  position:relative;
-  cursor:pointer;
-  transition:0.3s;
-}
-
-.card:hover{
-  transform:scale(1.1);
-}
-
-.card img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-.card span{
-  position:absolute;
-  bottom:10px;
-  left:10px;
-  font-weight:600;
-  background:rgba(0,0,0,0.6);
-  padding:5px 8px;
-  border-radius:5px;
-}
+a { color:#0ff; text-decoration:none; }
 </style>
 </head>
-
 <body>
 
-<nav>
-  <div class="logo">HOÀNG ĐB</div>
-</nav>
-
-<div class="hero">
-  <div class="hero-content">
-    <h1>Detective Conan</h1>
-    <button onclick="playFirst()">▶ Xem Tập 1</button>
-  </div>
-</div>
-
-<div class="section">
-  <h2>Danh Sách Tập</h2>
-  <div class="episode-row" id="episodes"></div>
-</div>
+<h1>Thám Tử Lừng Danh Conan</h1>
+<div id="episode-list"></div>
 
 <script>
+fetch("episodes.json")
+  .then(res => res.json())
+  .then(data => {
 
-const episodes = [
-  {tap:"Tập 1", url:"https://s3.phim1280.tv/20240318/p2oB0Tj7/index.m3u8", img:"images/tap1.webp"},
-  {tap:"Tập 2", url:"https://s3.phim1280.tv/20240318/BqPt4VYU/index.m3u8", img:"images/tap2.webp"},
-  {tap:"Tập 3", url:"https://s3.phim1280.tv/20240318/UtGLL0NU/index.m3u8", img:"images/tap3.webp"}
-];
+    const episodes = data.episodes[0].server_data;
+    const container = document.getElementById("episode-list");
 
-const container = document.getElementById("episodes");
+    episodes.forEach(ep => {
+      container.innerHTML += `
+        <div class="episode">
+          <a href="watch.html?slug=${ep.slug}">
+            ${ep.name}
+          </a>
+        </div>
+      `;
+    });
 
-episodes.forEach((ep)=>{
-  const card = document.createElement("div");
-  card.className="card";
-  card.innerHTML = `
-    <img src="${ep.img}">
-    <span>${ep.tap}</span>
-  `;
-  card.onclick = ()=>{
-    window.location.href = "watch.html?video=" + encodeURIComponent(ep.url) + "&title=" + encodeURIComponent(ep.tap);
-  };
-  container.appendChild(card);
-});
-
-function playFirst(){
-  window.location.href = "watch.html?video=" + encodeURIComponent(episodes[0].url) + "&title=" + encodeURIComponent(episodes[0].tap);
-}
-
+  });
 </script>
 
 </body>
 </html>
-
-
-
-
-
