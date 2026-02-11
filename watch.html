@@ -2,73 +2,44 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Xem Phim</title>
-
-<style>
-body{
-  background:#000;
-  margin:0;
-  color:white;
-  font-family:Arial;
-}
-
-.topbar{
-  padding:15px 30px;
-  background:#111;
-}
-
-.topbar a{
-  color:red;
-  text-decoration:none;
-  font-weight:bold;
-}
-
-.player{
-  display:flex;
-  justify-content:center;
-  margin-top:20px;
-}
-
-video{
-  width:90%;
-  max-width:1200px;
-  border-radius:10px;
-}
-</style>
+<title>Xem Conan</title>
 </head>
-<body>
+<body style="background:black;color:white;text-align:center;">
 
-<div class="topbar">
-  <a href="index.html">← Quay lại</a>
-  <span id="title" style="margin-left:20px;"></span>
-</div>
+<h2 id="title"></h2>
 
-<div class="player">
-  <video id="video" controls autoplay></video>
-</div>
+<video id="player" controls width="900"></video>
+
+<br><br>
+<a href="index.html" style="color:#0ff">← Quay lại</a>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <script>
-
 const params = new URLSearchParams(window.location.search);
-const videoUrl = params.get("video");
-const title = params.get("title");
+const slug = params.get("slug");
 
-document.getElementById("title").innerText = title;
+fetch("episodes.json")
+  .then(res => res.json())
+  .then(data => {
 
-const video = document.getElementById("video");
-let hls;
+    const episodes = data.episodes[0].server_data;
+    const episode = episodes.find(ep => ep.slug === slug);
 
-if(Hls.isSupported()){
-  hls = new Hls();
-  hls.loadSource(videoUrl);
-  hls.attachMedia(video);
-}else{
-  video.src = videoUrl;
-}
+    document.getElementById("title").innerText = episode.name;
 
+    const video = document.getElementById("player");
+
+    if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(episode.link_m3u8);
+        hls.attachMedia(video);
+    } 
+    else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = episode.link_m3u8;
+    }
+
+  });
 </script>
 
 </body>
