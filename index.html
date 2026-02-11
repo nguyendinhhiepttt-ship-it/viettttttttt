@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Phim</title>
+
+<style>
+body{
+  background:#111;
+  color:white;
+  font-family:Arial;
+}
+
+#episodeList{
+  display:grid;
+  grid-template-columns: repeat(auto-fill,minmax(80px,1fr));
+  gap:5px;
+  max-height:300px;
+  overflow-y:auto;
+}
+
+button{
+  padding:6px;
+  background:#222;
+  color:white;
+  border:none;
+  cursor:pointer;
+}
+
+button:hover{
+  background:red;
+}
+
+video{
+  width:100%;
+  max-width:900px;
+  margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Danh sách tập</h2>
+<div id="episodeList"></div>
+
+<video id="video" controls></video>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<script>
+
+const video = document.getElementById("video");
+const container = document.getElementById("episodeList");
+let hls;
+
+// load file json
+fetch("episodes.json")
+.then(res => res.json())
+.then(data => {
+
+  data.forEach(ep => {
+
+    const btn = document.createElement("button");
+    btn.innerText = ep.tap;
+
+    btn.onclick = () => play(ep.url);
+
+    container.appendChild(btn);
+  });
+
+});
+
+function play(url){
+
+  if(hls){
+    hls.destroy();
+  }
+
+  if(Hls.isSupported()){
+    hls = new Hls();
+    hls.loadSource(url);
+    hls.attachMedia(video);
+  }else{
+    video.src = url;
+  }
+}
+
+</script>
+
+</body>
+</html>
