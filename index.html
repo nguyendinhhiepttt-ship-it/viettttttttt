@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web Phim</title>
+<title>MyFlix</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
@@ -25,7 +25,7 @@ nav{
   position:fixed;
   width:100%;
   top:0;
-  background:rgba(0,0,0,0.7);
+  background:rgba(0,0,0,0.8);
   padding:15px 40px;
   display:flex;
   justify-content:space-between;
@@ -39,17 +39,10 @@ nav{
   color:red;
 }
 
-nav input{
-  padding:8px 12px;
-  border-radius:20px;
-  border:none;
-  width:220px;
-}
-
 /* HERO */
 .hero{
-  height:80vh;
-  background:url('https://images.unsplash.com/photo-1606112219348-204d7d8b94ee') center/cover no-repeat;
+  height:70vh;
+  background:url('images/tap1.webp') center/cover no-repeat;
   display:flex;
   align-items:center;
   padding:0 60px;
@@ -61,7 +54,7 @@ nav input{
   content:'';
   position:absolute;
   inset:0;
-  background:linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.2));
+  background:linear-gradient(to right, rgba(0,0,0,0.85), rgba(0,0,0,0.2));
 }
 
 .hero-content{
@@ -74,11 +67,6 @@ nav input{
   margin-bottom:15px;
 }
 
-.hero p{
-  margin-bottom:20px;
-  opacity:0.8;
-}
-
 .hero button{
   padding:12px 25px;
   border:none;
@@ -89,9 +77,9 @@ nav input{
   cursor:pointer;
 }
 
-/* EPISODE SECTION */
+/* SECTION */
 .section{
-  padding:40px 60px;
+  padding:50px 60px;
 }
 
 .section h2{
@@ -105,35 +93,33 @@ nav input{
 }
 
 .card{
-  min-width:160px;
-  height:220px;
-  background:#1e293b;
-  border-radius:10px;
-  display:flex;
-  align-items:flex-end;
-  padding:10px;
+  min-width:170px;
+  height:240px;
+  border-radius:12px;
+  overflow:hidden;
+  position:relative;
   cursor:pointer;
   transition:0.3s;
-  position:relative;
 }
 
 .card:hover{
   transform:scale(1.1);
 }
 
-.card span{
-  font-weight:600;
-}
-
-/* VIDEO */
-.player{
-  padding:40px 60px;
-}
-
-video{
+.card img{
   width:100%;
-  max-width:1000px;
-  border-radius:10px;
+  height:100%;
+  object-fit:cover;
+}
+
+.card span{
+  position:absolute;
+  bottom:10px;
+  left:10px;
+  font-weight:600;
+  background:rgba(0,0,0,0.6);
+  padding:5px 8px;
+  border-radius:5px;
 }
 </style>
 </head>
@@ -142,13 +128,11 @@ video{
 
 <nav>
   <div class="logo">MyFlix</div>
-  <input type="text" placeholder="Tìm kiếm phim...">
 </nav>
 
 <div class="hero">
   <div class="hero-content">
-    <h1>Phim Của Tôi</h1>
-    <p>Bộ phim hấp dẫn đang phát sóng. Nhấn xem ngay để thưởng thức.</p>
+    <h1>Detective Conan</h1>
     <button onclick="playFirst()">▶ Xem Tập 1</button>
   </div>
 </div>
@@ -158,48 +142,31 @@ video{
   <div class="episode-row" id="episodes"></div>
 </div>
 
-<div class="player">
-  <video id="video" controls></video>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
 <script>
 
 const episodes = [
-  {tap:"Tập 1", url:"LINK_M3U8_TAP1"},
-  {tap:"Tập 2", url:"LINK_M3U8_TAP2"},
-  {tap:"Tập 3", url:"LINK_M3U8_TAP3"}
+  {tap:"Tập 1", url:"https://s3.phim1280.tv/20240318/p2oB0Tj7/index.m3u8", img:"images/tap1.webp"},
+  {tap:"Tập 2", url:"https://s3.phim1280.tv/20240318/BqPt4VYU/index.m3u8", img:"images/tap2.webp"},
+  {tap:"Tập 3", url:"https://s3.phim1280.tv/20240318/UtGLL0NU/index.m3u8", img:"images/tap3.webp"}
 ];
 
 const container = document.getElementById("episodes");
-const video = document.getElementById("video");
-let hls;
 
-episodes.forEach(ep=>{
+episodes.forEach((ep)=>{
   const card = document.createElement("div");
   card.className="card";
-  card.innerHTML = "<span>"+ep.tap+"</span>";
-  card.onclick = ()=> play(ep.url);
+  card.innerHTML = `
+    <img src="${ep.img}">
+    <span>${ep.tap}</span>
+  `;
+  card.onclick = ()=>{
+    window.location.href = "watch.html?video=" + encodeURIComponent(ep.url) + "&title=" + encodeURIComponent(ep.tap);
+  };
   container.appendChild(card);
 });
 
-function play(url){
-  if(hls) hls.destroy();
-
-  if(Hls.isSupported()){
-    hls = new Hls();
-    hls.loadSource(url);
-    hls.attachMedia(video);
-  }else{
-    video.src = url;
-  }
-
-  window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
-}
-
 function playFirst(){
-  play(episodes[0].url);
+  window.location.href = "watch.html?video=" + encodeURIComponent(episodes[0].url) + "&title=" + encodeURIComponent(episodes[0].tap);
 }
 
 </script>
